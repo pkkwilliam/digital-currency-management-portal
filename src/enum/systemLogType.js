@@ -1,0 +1,39 @@
+export const SYSTEM_LOG_TYPE_ADDRESS = { key: 'ADDRESS', label: '地址' };
+export const SYSTEM_LOG_TYPE_AUTHORIZATION = { key: 'AUTHORIZATION', label: '權限' };
+export const SYSTEM_LOG_TYPE_CATEGORY = { key: 'CATEGORY', label: '標籤/分類' };
+export const SYSTEM_LOG_TYPE_COMPANY_BUSINESS = { key: 'COMPANY_BUSINESS', label: '客戶' };
+export const SYSTEM_LOG_TYPE_COMPANY_CONFIG = { key: 'COMPANY_CONFIG', label: '系統設定' };
+export const SYSTEM_LOG_TYPE_ITEM = { key: 'ITEM', label: '商品' };
+export const SYSTEM_LOG_TYPE_ITEM_SPECIFICATION = { key: 'ITEM_SPECIFICATION', label: '規格' };
+export const SYSTEM_LOG_TYPE_ITEM_SPECIFICATION_PRICE_TEMPLATE = {
+  key: 'ITEM_SPECIFICATION_PRICE_TEMPLATE',
+  label: '特供價單',
+};
+export const SYSTEM_LOG_TYPE_ITEM_STOCK = { key: 'ITEM_STOCK', label: '庫存' };
+export const SYSTEM_LOG_TYPE_ORDER = { key: 'ORDER', label: '訂單' };
+export const SYSTEM_LOG_TYPE_PRINTER = { key: 'PRINTER', label: '打印機' };
+export const SYSTEM_LOG_TYPE_SHOP = { key: 'SHOP', label: '門店/倉庫' };
+export const SYSTEM_LOG_TYPE_SYSTEM_LOG = { key: 'SYSTEM_LOG', label: '日誌' };
+export const SYSTEM_LOG_TYPE_USER = { key: 'USER', label: '用戶' };
+export const SYSTEM_LOG_TYPE_WECHAT_MINI_PROGRAM_CONFIG = {
+  key: 'WECHAT_MINI_PROGRAM_CONFIG',
+  label: '微信小程序設定',
+};
+
+export const SYSTEM_LOG_TYPES = [
+  SYSTEM_LOG_TYPE_ADDRESS,
+  SYSTEM_LOG_TYPE_AUTHORIZATION,
+  SYSTEM_LOG_TYPE_CATEGORY,
+  SYSTEM_LOG_TYPE_COMPANY_BUSINESS,
+  SYSTEM_LOG_TYPE_COMPANY_CONFIG,
+  SYSTEM_LOG_TYPE_ITEM,
+  SYSTEM_LOG_TYPE_ITEM_SPECIFICATION,
+  SYSTEM_LOG_TYPE_ITEM_SPECIFICATION_PRICE_TEMPLATE,
+  SYSTEM_LOG_TYPE_ITEM_STOCK,
+  SYSTEM_LOG_TYPE_ORDER,
+  SYSTEM_LOG_TYPE_PRINTER,
+  SYSTEM_LOG_TYPE_SHOP,
+  SYSTEM_LOG_TYPE_SYSTEM_LOG,
+  SYSTEM_LOG_TYPE_USER,
+  SYSTEM_LOG_TYPE_WECHAT_MINI_PROGRAM_CONFIG,
+];

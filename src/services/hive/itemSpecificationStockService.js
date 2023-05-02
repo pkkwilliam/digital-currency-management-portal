@@ -1,0 +1,6 @@
+const COMPANY_ITEM_SPECIFICATION_STOCK_SERVICE_URL = '/company/item_specification_stock/v1';
+
+export const COMPANY_ITEM_SPECIFICATION_STOCK_SERVICE_CONFIG = {
+  requireAuth: true,
+  serviceUrl: COMPANY_ITEM_SPECIFICATION_STOCK_SERVICE_URL,
+};
