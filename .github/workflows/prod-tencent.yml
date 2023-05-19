@@ -35,5 +35,5 @@ jobs:
           key: ${{ secrets.TENCENT_CLOUD_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            rm -rf /var/www/html/mdc
+            rm -rf /var/www/html/mdc/*
             mv ~/temp/mdc/dist/* /var/www/html/mdc
