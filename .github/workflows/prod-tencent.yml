@@ -11,6 +11,7 @@ jobs:
 
   build:
     name: 'Node Build'
+    needs: [checkout-branch]
     runs-on: ubuntu-latest
     steps:
       - name: Setup Node.js
@@ -24,6 +25,7 @@ jobs:
 
   upload-build:
     name: 'Upload Build'
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/scp-action@master
@@ -37,6 +39,7 @@ jobs:
 
   move-build:
     name: 'Move Build'
+    needs: [upload-build]
     runs-on: ubuntu-latest
     steps:
       - uses: appleboy/ssh-action@v0.1.6
