@@ -1,0 +1,39 @@
+# Need to manual remove all contents in /var/www/html
+name: Deploy Prod Tencent bitcode-lab.com
+run-name: ${{ github.actor }} trigger by ${{github.event_name}}
+on: [workflow_dispatch]
+jobs:
+  build-deploy-application:
+    runs-on: ubuntu-latest
+    name: 'Build and Deploy Application'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '14.x'
+      - run: npm install
+      - run: npm run build-prod
+        env:
+          CI: false
+
+      - name: 'move build to Tencent temp'
+        uses: appleboy/scp-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.TENCENT_CLOUD_SSH_USERNAME }}
+          key: ${{ secrets.TENCENT_CLOUD_KEY }}
+          port: ${{ secrets.PORT }}
+          source: 'build/*'
+          target: '~/temp/mdc'
+
+      - name: 'Move Files From Temp Folder To Production Folder'
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.TENCENT_CLOUD_SSH_USERNAME }}
+          key: ${{ secrets.TENCENT_CLOUD_KEY }}
+          port: ${{ secrets.PORT }}
+          script: |
+            rm -rf /var/www/html/mdc
+            mv ~/temp/mdc/build/* /var/www/html/mdc
