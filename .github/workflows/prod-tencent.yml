@@ -2,6 +2,9 @@
 name: Deploy Prod Tencent bitcode-lab.com
 run-name: ${{ github.actor }} trigger by ${{github.event_name}}
 on: [workflow_dispatch]
+env:
+  BUILD_FOLDER_NAME: dist
+  SERVER_FOLDER_NAME: mdc
 jobs:
   build-deploy-application:
     runs-on: ubuntu-latest
@@ -24,8 +27,8 @@ jobs:
           username: ${{ secrets.TENCENT_CLOUD_SSH_USERNAME }}
           key: ${{ secrets.TENCENT_CLOUD_KEY }}
           port: ${{ secrets.PORT }}
-          source: 'dist/*'
-          target: '~/temp/mdc'
+          source: '${{env.BUILD_FOLDER_NAME}}/*'
+          target: '~/temp/${{ env.SERVER_FOLDER_NAME }}'
 
       - name: 'Move Files From Temp Folder To Production Folder'
         uses: appleboy/ssh-action@v0.1.6
@@ -35,5 +38,5 @@ jobs:
           key: ${{ secrets.TENCENT_CLOUD_KEY }}
           port: ${{ secrets.PORT }}
           script: |
-            rm -rf /var/www/html/mdc/*
-            mv ~/temp/mdc/dist/* /var/www/html/mdc
+            rm -rf /var/www/html/${{ env.SERVER_FOLDER_NAME }}/*
+            mv ~/temp/${{ env.SERVER_FOLDER_NAME }}/${{ env.BUILD_FOLDER_NAME }}/* /var/www/html/${{ env.SERVER_FOLDER_NAME }}
