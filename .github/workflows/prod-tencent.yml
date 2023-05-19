@@ -3,11 +3,16 @@ name: Deploy Prod Tencent bitcode-lab.com
 run-name: ${{ github.actor }} trigger by ${{github.event_name}}
 on: [workflow_dispatch]
 jobs:
-  build-deploy-application:
+  checkout-branch:
+    name: 'Checkout Branch'
     runs-on: ubuntu-latest
-    name: 'Build and Deploy Application'
     steps:
       - uses: actions/checkout@v3
+
+  build:
+    name: 'Node Build'
+    runs-on: ubuntu-latest
+    steps:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
@@ -17,18 +22,24 @@ jobs:
         env:
           CI: false
 
-      - name: 'move build to Tencent temp'
-        uses: appleboy/scp-action@master
+  upload-build:
+    name: 'Upload Build'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/scp-action@master
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.TENCENT_CLOUD_SSH_USERNAME }}
           key: ${{ secrets.TENCENT_CLOUD_KEY }}
           port: ${{ secrets.PORT }}
-          source: 'build/*'
+          source: 'dist/*'
           target: '~/temp/mdc'
 
-      - name: 'Move Files From Temp Folder To Production Folder'
-        uses: appleboy/ssh-action@v0.1.6
+  move-build:
+    name: 'Move Build'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.TENCENT_CLOUD_SSH_USERNAME }}
