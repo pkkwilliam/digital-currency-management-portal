@@ -26,3 +26,12 @@ export async function GET_INVEST_SUMMARY(investId, startDate, endDate) {
   };
   return constructBasicRequest(request);
 }
+
+export async function GET_PRODUCT_ID(channel, keyword) {
+  const request = {
+    authenticated: USER_INVEST_SERVICE_CONFIG.requireAuth,
+    method: 'GET',
+    requestUrl: USER_INVEST_SERVICE_CONFIG.serviceUrl + `/${channel}/productId?keyword=${keyword}`,
+  };
+  return constructBasicRequest(request);
+}
