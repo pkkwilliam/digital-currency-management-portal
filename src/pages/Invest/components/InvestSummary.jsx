@@ -4,6 +4,7 @@ import { GET_INVEST_SUMMARY } from '@/services/hive/investService';
 import { getDate, toApplicationLocalDate } from '@/util/dateUtil';
 import Text from 'antd/lib/typography/Text';
 import { SearchOutlined } from '@ant-design/icons';
+import AutomateOrderBar from './InvestSmmaryBar';
 
 const InvestSummary = (props) => {
   const [investSummary, setInvestSummary] = useState({});
@@ -22,6 +23,7 @@ const InvestSummary = (props) => {
       toApplicationLocalDate(startDate),
       toApplicationLocalDate(endDate),
     );
+    console.log('III', response);
     setInvestSummary(response);
   };
 
@@ -43,15 +45,21 @@ const InvestSummary = (props) => {
         </Space>
       }
     >
-      <Space direction="vertical">
+      <Row>
         <Text>Financial Report</Text>
+      </Row>
+      <Row>
         <InvestFinancialReport investSummary={investSummary} />
-      </Space>
+      </Row>
       <Divider />
-      <Space direction="vertical">
+      <Row>
         <Text>Automate Order Bar</Text>
-        <AutomateOrderBar invest={investSummary} />
-      </Space>
+      </Row>
+      <Row>
+        <Col span={24}>
+          <AutomateOrderBar invest={investSummary} />
+        </Col>
+      </Row>
     </Card>
   );
 };
@@ -93,22 +101,6 @@ const InvestFinancialReport = (props) => {
       />
     </Space>
   );
-};
-
-const AutomateOrderBar = (props) => {
-  const { investSteps } = props.invest;
-  if (!investSteps) {
-    return <></>;
-  }
-  const bars = investSteps.map(({ from, hasOrder, isProfit, to }) => {
-    const color = !hasOrder ? 'grey' : isProfit ? 'green' : 'red';
-    return (
-      <Tooltip key="AutomateOrderBar" text={`$${from}-$${to}`}>
-        <div style={{ backgroundColor: color, borderRadius: 5, width: 9, height: 5 }} />
-      </Tooltip>
-    );
-  });
-  return <Space wrap>{bars}</Space>;
 };
 
 export default InvestSummary;
