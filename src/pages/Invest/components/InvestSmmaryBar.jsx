@@ -31,20 +31,18 @@ const AutomateOrderPoint = (props) => {
 const CurrentAutomateOrderBar = (props) => {
   const { barWidth, investSteps, rangeMax, rangeMin } = props;
   const bars = investSteps
-    ? investSteps
-        .filter(({ hasOrder }) => hasOrder)
-        .map(({ from, hasOrder, profit, to }) => {
-          const leftValue = calculateAbsoluteLeftValue(barWidth, rangeMax, rangeMin, to);
-          return (
-            <AutomateOrderPoint
-              key="bar"
-              color={profit ? 'green' : 'red'}
-              height={BAR_HEIGHT}
-              left={leftValue}
-              text={to}
-            />
-          );
-        })
+    ? investSteps.map(({ actualOpenPrice, from, hasOrder, profit, to }) => {
+        const leftValue = calculateAbsoluteLeftValue(barWidth, rangeMax, rangeMin, actualOpenPrice);
+        return (
+          <AutomateOrderPoint
+            key="bar"
+            color={profit ? 'green' : 'red'}
+            height={BAR_HEIGHT}
+            left={leftValue}
+            text={to}
+          />
+        );
+      })
     : [];
   return bars;
 };
@@ -61,7 +59,6 @@ const CurrentTickingPoint = (props) => {
       color="purple"
       height={TICKING_BAR_HEIGHT}
       left={leftValue}
-      showPrice
       text={currentTickingPrice}
     />
   );
