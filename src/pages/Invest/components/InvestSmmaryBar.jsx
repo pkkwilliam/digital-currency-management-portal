@@ -31,7 +31,7 @@ const AutomateOrderPoint = (props) => {
 const CurrentAutomateOrderBar = (props) => {
   const { barWidth, investSteps, rangeMax, rangeMin } = props;
   const bars = investSteps
-    ? investSteps.map(({ actualOpenPrice, from, hasOrder, profit, to }) => {
+    ? investSteps.map(({ actualOpenPrice, from, profit, to }) => {
         const leftValue = calculateAbsoluteLeftValue(barWidth, rangeMax, rangeMin, actualOpenPrice);
         return (
           <AutomateOrderPoint
@@ -39,7 +39,7 @@ const CurrentAutomateOrderBar = (props) => {
             color={profit ? 'green' : 'red'}
             height={BAR_HEIGHT}
             left={leftValue}
-            text={to}
+            text={actualOpenPrice}
           />
         );
       })

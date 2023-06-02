@@ -23,7 +23,6 @@ const InvestSummary = (props) => {
       toApplicationLocalDate(startDate),
       toApplicationLocalDate(endDate),
     );
-    console.log('III', response);
     setInvestSummary(response);
   };
 
