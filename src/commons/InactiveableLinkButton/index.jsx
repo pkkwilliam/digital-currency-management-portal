@@ -1,10 +1,19 @@
-import { Popconfirm } from 'antd';
+import { Popconfirm, Space } from 'antd';
 import Text from 'antd/lib/typography/Text';
 import React from 'react';
 
 const InactiveableLinkButton = (props) => {
-  const { disabled, key = 'delete', label, onClick, popConfirm, popConfirmMessage } = props;
+  const {
+    description,
+    disabled,
+    key = 'delete',
+    label,
+    onClick,
+    popConfirm,
+    popConfirmMessage,
+  } = props;
   let button;
+  let DescriptionElement = description ? <Text type="secondary">{description}</Text> : null;
   if (popConfirm) {
     button = (
       <Popconfirm
@@ -14,7 +23,10 @@ const InactiveableLinkButton = (props) => {
         okText="OK"
         title={popConfirmMessage ? popConfirmMessage : '確定執行?'}
       >
-        <a>{label}</a>
+        <Space direction="vertical" size={0}>
+          <a>{label}</a>
+          {DescriptionElement}
+        </Space>
       </Popconfirm>
     );
   } else {

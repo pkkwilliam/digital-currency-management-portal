@@ -26,3 +26,12 @@ export const CLOSE_ORDER = (orderId, params) => {
   };
   return constructBasicRequest(request);
 };
+
+export const IGNORE_ORDER = (orderId) => {
+  const request = {
+    authenticated: USER_MANUAL_ORDER_SERVICE_CONFIG.requireAuth,
+    method: 'PUT',
+    requestUrl: USER_MANUAL_ORDER_SERVICE_CONFIG.serviceUrl + `/${orderId}/ignore`,
+  };
+  return constructBasicRequest(request);
+};

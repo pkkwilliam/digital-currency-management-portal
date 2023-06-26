@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import ProTable from '@ant-design/pro-table';
 import { GET_INVEST_AUTOMATE_ORDERS } from '@/services/hive/automateOrderService';
-import { OPEN_ORDER, CLOSE_ORDER } from '@/services/hive/manualOrderService';
+import { OPEN_ORDER, CLOSE_ORDER, IGNORE_ORDER } from '@/services/hive/manualOrderService';
 import { getEnumLabelByKey, getEnumObjectByKey } from '@/enum/enumUtil';
 import {
   AUTOMATE_ORDER_STATUS,
@@ -9,6 +9,7 @@ import {
   AUTOMATE_ORDER_STATUS_SUBMITTED,
   AUTOMATE_ORDER_STATUS_SOLD,
   AUTOMATE_ORDER_STATUS_FILLED,
+  AUTOMATE_ORDER_STATUS_IGNORE,
 } from '@/enum/AutomateOrderStatus';
 import { Badge, Button, Card, Popover, Space, Tag } from 'antd';
 import { LoadingOutlined, ReloadOutlined, SyncOutlined } from '@ant-design/icons';
@@ -211,6 +212,24 @@ const AutomateOrderTable = (props) => {
             popConfirm
             popConfirmMessage="Close this order?"
           />,
+          <Popover
+            key="optionList"
+            content={() => {
+              return (
+                <InactiveableLinkButton
+                  description="To ignore current order for automate calcualtion"
+                  disabled={!record.active}
+                  label="Ignore Order"
+                  onClick={() => onClickIgnoreOrder(record)}
+                  popConfirm
+                  popConfirmMessage="Ignore this order?"
+                />
+              );
+            }}
+            placement="bottom"
+          >
+            <a>Options</a>
+          </Popover>,
         ];
       },
     },
@@ -224,6 +243,12 @@ const AutomateOrderTable = (props) => {
 
   const onClickCloseOrder = async (record) => {
     await CLOSE_ORDER(record.id, { actualCloseSize: record.invest.size });
+    tableRef.current.reload();
+    return true;
+  };
+
+  const onClickIgnoreOrder = async (record) => {
+    await IGNORE_ORDER(record.id);
     tableRef.current.reload();
     return true;
   };
