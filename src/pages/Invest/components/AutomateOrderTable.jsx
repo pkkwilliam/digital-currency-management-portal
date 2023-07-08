@@ -9,7 +9,6 @@ import {
   AUTOMATE_ORDER_STATUS_SUBMITTED,
   AUTOMATE_ORDER_STATUS_SOLD,
   AUTOMATE_ORDER_STATUS_FILLED,
-  AUTOMATE_ORDER_STATUS_IGNORE,
 } from '@/enum/AutomateOrderStatus';
 import { Badge, Button, Card, Popover, Space, Tag } from 'antd';
 import { LoadingOutlined, ReloadOutlined, SyncOutlined } from '@ant-design/icons';
@@ -109,17 +108,17 @@ const AutomateOrderTable = (props) => {
       ),
     },
     {
-      title: 'Actual Price',
+      title: 'Actual/Diff',
       render: (
         _,
         { actualClosePrice, actualOpenPrice, expectedClosePrice, expectedOpenPrice, investType },
       ) => {
         const executedClosePriceDifference =
-          actualClosePrice !== expectedClosePrice
+          expectedClosePrice && actualClosePrice !== expectedClosePrice
             ? Math.abs(actualClosePrice - expectedClosePrice).toFixed(6)
             : null;
         const executedOpenPriceDifference =
-          actualOpenPrice !== expectedOpenPrice
+          expectedOpenPrice && actualOpenPrice !== expectedOpenPrice
             ? Math.abs(actualOpenPrice - expectedOpenPrice).toFixed(6)
             : null;
         const showPriceDifference = executedClosePriceDifference || executedOpenPriceDifference;
