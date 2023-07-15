@@ -4,9 +4,14 @@ export const ALGORITHM_DYNAMIC_GRID_TRADE = {
   key: 'DYNAMIC_GRID_TRADE',
   label: 'Dynamic Grid Trade',
 };
+export const ALGORITHM_DYNAMIC_GRID_TRADE_FLAT = {
+  key: 'DYNAMIC_GRID_TRADE_FLAT',
+  label: 'Dynamic Grid Trade Flat',
+};
 
 export const ALGORITHM_TYPES = [
   ALGORITHM_BRUTAL_FORCE,
   ALGORITHM_GRID_TRADING,
   ALGORITHM_DYNAMIC_GRID_TRADE,
+  ALGORITHM_DYNAMIC_GRID_TRADE_FLAT,
 ];
