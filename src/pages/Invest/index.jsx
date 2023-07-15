@@ -114,12 +114,13 @@ const Invest = () => {
       ),
     },
     {
-      title: 'Type/Algo',
+      title: 'Type/Algo/Acc',
 
-      render: (_, { algorithmType, investType }) => (
+      render: (_, { algorithmType, investType, tradeAccount }) => (
         <Space direction="vertical" size={0}>
           <Text>{getEnumLabelByKey(INVEST_TYPES, investType)}</Text>
           <Text>{getEnumLabelByKey(ALGORITHM_TYPES, algorithmType)}</Text>
+          <Text>{tradeAccount}</Text>
         </Space>
       ),
       tooltip: '1. Invest Type (Position Type) 2. Algoirthm Type',

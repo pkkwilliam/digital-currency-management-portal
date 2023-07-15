@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import ProTable from '@ant-design/pro-table';
 import { GET_INVEST_AUTOMATE_ORDERS } from '@/services/hive/automateOrderService';
-import { OPEN_ORDER, CLOSE_ORDER, IGNORE_ORDER } from '@/services/hive/manualOrderService';
+import { OPEN_ORDER, CLOSE_ORDER, UPDATE_EXECUTE_METHOD } from '@/services/hive/manualOrderService';
 import { getEnumLabelByKey, getEnumObjectByKey } from '@/enum/enumUtil';
 import {
   AUTOMATE_ORDER_STATUS,
@@ -16,6 +16,7 @@ import InactiveableLinkButton from '@/commons/InactiveableLinkButton';
 import { TRANSACTION_REASONS } from '@/enum/TransactionReason';
 import Text from 'antd/lib/typography/Text';
 import { toDisplayDateFromDouble } from '@/util/dateUtil';
+import { AUTOMATE_ORDER_EXECUTE_METHODS } from '@/enum/AutomateOrderExecuteMethod';
 
 const DISPLAY_FORMAT = 'DD/hh:mm';
 
@@ -48,25 +49,38 @@ const AutomateOrderPopover = ({ item }) => {
 };
 
 const StatusBar = (props) => {
-  const [showInfo, setShowInfo] = useState(false);
-  const { active, invest, status } = props.record;
+  const { active, automateOrderExecuteMethod, invest, status } = props.record;
+
+  // Status
   const enumObject = getEnumObjectByKey(AUTOMATE_ORDER_STATUS, status);
   const spin =
     status === AUTOMATE_ORDER_STATUS_SELLING.key || status === AUTOMATE_ORDER_STATUS_SUBMITTED.key;
   let color;
   if (!active) {
     color = 'default';
-  } else if (status === AUTOMATE_ORDER_STATUS_SOLD.key) {
-    color = 'error';
-  } else if (status === AUTOMATE_ORDER_STATUS_FILLED.key) {
-    color = 'success';
+    // } else if (status === AUTOMATE_ORDER_STATUS_SOLD.key) {
+    //   color = 'error';
+    // } else if (status === AUTOMATE_ORDER_STATUS_FILLED.key) {
+    //   color = 'success';
   } else {
     color = 'processing';
   }
+
+  // Automate Order Execute Method
+  const automateOrderExecuteMethodEnum = getEnumObjectByKey(
+    AUTOMATE_ORDER_EXECUTE_METHODS,
+    automateOrderExecuteMethod,
+  );
+
   return (
-    <Tag icon={spin ? <SyncOutlined spin /> : null} color={color}>
-      {enumObject.label}
-    </Tag>
+    <Space direction="vertical">
+      <Tag icon={spin ? <SyncOutlined spin /> : null} color={color}>
+        {enumObject.label}
+      </Tag>
+      <Tag color={active ? automateOrderExecuteMethodEnum.color : 'default'}>
+        {automateOrderExecuteMethodEnum.label}
+      </Tag>
+    </Space>
   );
 };
 
@@ -185,7 +199,7 @@ const AutomateOrderTable = (props) => {
     // },
     {
       title: 'Profit/Total',
-      render: (_, { active, actualOpenSize, profit }) => {
+      render: (_, { active, actualOpenSize, automateOrderExecuteMethod, profit }) => {
         const totalProfit = profit && actualOpenSize ? (profit * actualOpenSize).toFixed(5) : '-';
         const textColor = getTextType(active, profit);
         return (
@@ -202,9 +216,24 @@ const AutomateOrderTable = (props) => {
       title: 'Operation',
       valueType: 'option',
       render: (text, record) => {
+        const { active, automateOrderExecuteMethod } = record;
+        const ExecuteMethodOptions = AUTOMATE_ORDER_EXECUTE_METHODS.map((methodObject) => {
+          return (
+            <InactiveableLinkButton
+              disabled={!active || automateOrderExecuteMethod === methodObject.key}
+              info={methodObject.info}
+              key={methodObject.key}
+              label={`Execute Method - ${methodObject.label}`}
+              onClick={() => onClickUpdateExecuteMethod(record, methodObject.key)}
+              popConfirm
+              popConfirmMessage={`Update Execute Method ${methodObject.label}?`}
+            />
+          );
+        });
+
         return [
           <InactiveableLinkButton
-            disabled={!record.active}
+            disabled={!active}
             key="close"
             label="Close"
             onClick={() => onClickCloseOrder(record)}
@@ -214,16 +243,7 @@ const AutomateOrderTable = (props) => {
           <Popover
             key="optionList"
             content={() => {
-              return (
-                <InactiveableLinkButton
-                  description="To ignore current order for automate calcualtion"
-                  disabled={!record.active}
-                  label="Ignore Order"
-                  onClick={() => onClickIgnoreOrder(record)}
-                  popConfirm
-                  popConfirmMessage="Ignore this order?"
-                />
-              );
+              return <Space direction="vertical">{ExecuteMethodOptions}</Space>;
             }}
             placement="bottom"
           >
@@ -246,8 +266,8 @@ const AutomateOrderTable = (props) => {
     return true;
   };
 
-  const onClickIgnoreOrder = async (record) => {
-    await IGNORE_ORDER(record.id);
+  const onClickUpdateExecuteMethod = async (record, executeMethod) => {
+    await UPDATE_EXECUTE_METHOD(record.id, executeMethod);
     tableRef.current.reload();
     return true;
   };

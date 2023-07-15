@@ -27,11 +27,13 @@ export const CLOSE_ORDER = (orderId, params) => {
   return constructBasicRequest(request);
 };
 
-export const IGNORE_ORDER = (orderId) => {
+export const UPDATE_EXECUTE_METHOD = (orderId, executeMethod) => {
   const request = {
     authenticated: USER_MANUAL_ORDER_SERVICE_CONFIG.requireAuth,
     method: 'PUT',
-    requestUrl: USER_MANUAL_ORDER_SERVICE_CONFIG.serviceUrl + `/${orderId}/ignore`,
+    requestUrl:
+      USER_MANUAL_ORDER_SERVICE_CONFIG.serviceUrl +
+      `/${orderId}/ignore?executeMethod=${executeMethod}`,
   };
   return constructBasicRequest(request);
 };
