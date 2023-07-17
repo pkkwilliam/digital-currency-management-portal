@@ -10,12 +10,13 @@ import ProFormAlgorithmSelect from '@/commons/proForm/ProFormAlgorithmSelect';
 import ProFormChannelSelect from '@/commons/proForm/ProFormChannelSelect';
 import { Collapse, Form, Space } from 'antd';
 import { onModalFormVisibleChange } from '@/commons/proForm/proformUtil';
-import { ALGORITHM_DYNAMIC_GRID_TRADE, ALGORITHM_GRID_TRADING } from '@/enum/Algorithm';
+import { ALGORITHM_TYPES } from '@/enum/Algorithm';
 import ProFormCalculateMerhodSelect from '@/commons/proForm/ProFormCalculateMethodSelect';
 import ProFormInvestTypeSelect from '@/commons/proForm/ProFormInvestTypeSelect';
 import ProFormChannelAccountSelect from '@/commons/proForm/ProFormChannelAccontSelect';
 import InvestOrderBook from './InvestOrderBook';
 import ChannelProductIdLookup from './ChannelProductIdLookup';
+import { getEnumObjectByKey } from '@/enum/enumUtil';
 
 const InvestModalForm = (props) => {
   const { invest, onFinish, setVisible, visible } = props;
@@ -82,14 +83,11 @@ const InvestModalForm = (props) => {
           <ProFormDependency name={['algorithmType']}>
             {(dependencyValues) => {
               const { algorithmType } = dependencyValues;
-              switch (algorithmType) {
-                case ALGORITHM_GRID_TRADING.key:
-                  return <GridTradingField />;
-                case ALGORITHM_DYNAMIC_GRID_TRADE.key:
-                  return <GridTradingField />;
-                default:
-                  return null;
+              const algorithmObject = getEnumObjectByKey(ALGORITHM_TYPES, algorithmType);
+              if (algorithmObject.showGrid) {
+                return <GridTradingField />;
               }
+              return null;
             }}
           </ProFormDependency>
         </Space>
