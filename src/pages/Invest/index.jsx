@@ -16,16 +16,17 @@ import {
   BEDROCK_UPDATE_SERVICE_REQUEST,
 } from '@/services/hive/bedrockTemplateService';
 import { INVEST_SYNC } from '@/services/hive/investSyncService';
-import { LoadingOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { LoadingOutlined, PlusOutlined, ReloadOutlined, WarningFilled } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import { Badge, Button, Divider, Space, Switch, Tooltip } from 'antd';
+import { Button, Space, Switch, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { GET_INVEST_DETAIL, USER_INVEST_SERVICE_CONFIG } from '../../services/hive/investService';
 import AutomateOrderTable from './components/AutomateOrderTable';
 import InvestDetailModal from './components/InvestDetailModal';
 import Text from 'antd/lib/typography/Text';
 import InvestSummary from './components/InvestSummary';
+import InvestWarningModal from './components/InvestWarningModal';
 
 const POLLING_INTERVAL = 5000;
 
@@ -47,6 +48,7 @@ const Invest = () => {
 
   const [currentRow, setCurrentRow] = useState();
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [warningModalVisible, setWarningModalVisible] = useState(false);
 
   const onCreate = async (request) => {
     await BEDROCK_CREATE_SERVICE_REQEUST(USER_INVEST_SERVICE_CONFIG, request);
@@ -105,13 +107,35 @@ const Invest = () => {
       title: 'Product',
       render: (_, { active, channel, productName }) => (
         <Space>
-          <Badge status={active ? 'success' : 'error'} />
+          <Switch
+            key="switch"
+            checked={active}
+            onChange={() => onActivateToggled(record)}
+            size="small"
+          />
           <Space direction="vertical" size={0}>
             <Text>{getEnumLabelByKey(CHANNEL_TYPES, channel, 'shortLabel')}</Text>
             <Text>{productName}</Text>
           </Space>
         </Space>
       ),
+    },
+    {
+      render: (_, record) => {
+        const { errorLogs } = record;
+        if (!errorLogs || errorLogs.length === 0) {
+          return null;
+        }
+        return (
+          <WarningFilled
+            onClick={() => {
+              setCurrentRow(record);
+              setWarningModalVisible(true);
+            }}
+            style={{ fontSize: 22, color: '#FF5733' }}
+          />
+        );
+      },
     },
     {
       title: 'Type/Algo/Acc',
@@ -198,12 +222,6 @@ const Invest = () => {
       render: (text, record) => {
         return (
           <Space direction="vertical">
-            <Switch
-              key="switch"
-              checked={record.active}
-              onChange={() => onActivateToggled(record)}
-              size="small"
-            />
             <InactiveableLinkButton
               key="edit"
               label="Edit"
@@ -275,6 +293,15 @@ const Invest = () => {
         onFinish={currentRow ? onUpdate : onCreate}
         setVisible={setDetailModalVisibleWithPolling}
         visible={detailModalVisible}
+      />
+      <InvestWarningModal
+        invest={currentRow}
+        onFinish={() => {
+          setCurrentRow(undefined);
+          tableRef.current.reload();
+        }}
+        setVisible={setWarningModalVisible}
+        visible={warningModalVisible}
       />
     </PageContainer>
   );

@@ -13,12 +13,13 @@ const InactiveableLinkButton = (props) => {
     onClick,
     popConfirm,
     popConfirmMessage,
+    textType = 'link' | 'danger',
   } = props;
   let button;
   let DescriptionElement = description ? <Text type="secondary">{description}</Text> : null;
   let InfoIcon = info ? (
     <Popover content={info}>
-      <InfoCircleOutlined style={{ color: '#666666' }} />
+      <InfoCircleOutlined style={{ color: '#bbbbbb' }} />
     </Popover>
   ) : null;
   if (popConfirm) {
@@ -32,7 +33,7 @@ const InactiveableLinkButton = (props) => {
       >
         <Space direction="vertical" size={0}>
           <Space>
-            <a>{label}</a>
+            {textType === 'danger' ? <Text type="danger">{label}</Text> : <a>{label}</a>}
             {InfoIcon}
           </Space>
           {DescriptionElement}
@@ -40,7 +41,14 @@ const InactiveableLinkButton = (props) => {
       </Popconfirm>
     );
   } else {
-    button = <a onClick={onClick}>{label}</a>;
+    button =
+      textType === 'danger' ? (
+        <Text onClick={onClick} type="danger">
+          {label}
+        </Text>
+      ) : (
+        <a onClick={onClick}>{label}</a>
+      );
   }
   return disabled ? (
     <Space>
