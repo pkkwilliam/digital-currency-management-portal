@@ -48,3 +48,12 @@ export async function GET_PRODUCT_ID(channel, keyword) {
   };
   return constructBasicRequest(request);
 }
+
+export async function DELETE_ALL_ERROR_LOGS(investId) {
+  const request = {
+    authenticated: USER_INVEST_SERVICE_CONFIG.requireAuth,
+    method: 'DELETE',
+    requestUrl: USER_INVEST_SERVICE_CONFIG.serviceUrl + `/${investId}/error_log`,
+  };
+  return constructBasicRequest(request);
+}

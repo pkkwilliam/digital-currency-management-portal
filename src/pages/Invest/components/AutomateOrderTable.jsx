@@ -1,14 +1,15 @@
 import React, { useRef, useState } from 'react';
 import ProTable from '@ant-design/pro-table';
-import { GET_INVEST_AUTOMATE_ORDERS } from '@/services/hive/automateOrderService';
+import {
+  GET_INVEST_AUTOMATE_ORDERS,
+  USER_AUTOMATE_ORDER_SERVICE_CONFIG,
+} from '@/services/hive/automateOrderService';
 import { OPEN_ORDER, CLOSE_ORDER, UPDATE_EXECUTE_METHOD } from '@/services/hive/manualOrderService';
 import { getEnumLabelByKey, getEnumObjectByKey } from '@/enum/enumUtil';
 import {
   AUTOMATE_ORDER_STATUS,
   AUTOMATE_ORDER_STATUS_SELLING,
   AUTOMATE_ORDER_STATUS_SUBMITTED,
-  AUTOMATE_ORDER_STATUS_SOLD,
-  AUTOMATE_ORDER_STATUS_FILLED,
 } from '@/enum/AutomateOrderStatus';
 import { Badge, Button, Card, Popover, Space, Tag } from 'antd';
 import { LoadingOutlined, ReloadOutlined, SyncOutlined } from '@ant-design/icons';
@@ -17,6 +18,7 @@ import { TRANSACTION_REASONS } from '@/enum/TransactionReason';
 import Text from 'antd/lib/typography/Text';
 import { toDisplayDateFromDouble } from '@/util/dateUtil';
 import { AUTOMATE_ORDER_EXECUTE_METHODS } from '@/enum/AutomateOrderExecuteMethod';
+import { BEDROCK_DEACTIVATE_SERVICE_REQUEST } from '@/services/hive/bedrockTemplateService';
 
 const DISPLAY_FORMAT = 'DD/hh:mm';
 
@@ -243,7 +245,26 @@ const AutomateOrderTable = (props) => {
           <Popover
             key="optionList"
             content={() => {
-              return <Space direction="vertical">{ExecuteMethodOptions}</Space>;
+              return (
+                <Space direction="vertical">
+                  {ExecuteMethodOptions}
+                  <InactiveableLinkButton
+                    disabled={!active}
+                    key="deactivate"
+                    label="Deactivate"
+                    onClick={async () => {
+                      await BEDROCK_DEACTIVATE_SERVICE_REQUEST(
+                        USER_AUTOMATE_ORDER_SERVICE_CONFIG,
+                        record.id,
+                      );
+                      tableRef.current.reload();
+                    }}
+                    popConfirm
+                    popConfirmMessage="Deactivate this order?"
+                    textType="danger"
+                  />
+                </Space>
+              );
             }}
             placement="bottom"
           >
