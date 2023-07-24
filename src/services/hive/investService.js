@@ -57,3 +57,12 @@ export async function DELETE_ALL_ERROR_LOGS(investId) {
   };
   return constructBasicRequest(request);
 }
+
+export async function RESET_TRANSACTION_LIMITER(investId) {
+  const request = {
+    authenticated: USER_INVEST_SERVICE_CONFIG.requireAuth,
+    method: 'PUT',
+    requestUrl: USER_INVEST_SERVICE_CONFIG.serviceUrl + `/${investId}/reset_transaction_limiter`,
+  };
+  return constructBasicRequest(request);
+}

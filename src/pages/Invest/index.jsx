@@ -122,8 +122,9 @@ const Invest = () => {
     },
     {
       render: (_, record) => {
-        const { errorLogs } = record;
-        if (!errorLogs || errorLogs.length === 0) {
+        const { errorLogs, transactionLimiter } = record;
+        const hasErrorLogs = errorLogs && errorLogs.length > 0;
+        if (!transactionLimiter && !hasErrorLogs) {
           return null;
         }
         return (
