@@ -16,9 +16,10 @@ import { LoadingOutlined, ReloadOutlined, SyncOutlined } from '@ant-design/icons
 import InactiveableLinkButton from '@/commons/InactiveableLinkButton';
 import { TRANSACTION_REASONS } from '@/enum/TransactionReason';
 import Text from 'antd/lib/typography/Text';
-import { toDisplayDateFromDouble } from '@/util/dateUtil';
+import { getUserFriendlyDisplayDate, toDisplayDateFromDouble } from '@/util/dateUtil';
 import { AUTOMATE_ORDER_EXECUTE_METHODS } from '@/enum/AutomateOrderExecuteMethod';
 import { BEDROCK_DEACTIVATE_SERVICE_REQUEST } from '@/services/hive/bedrockTemplateService';
+import moment from 'moment';
 
 const DISPLAY_FORMAT = 'DD/hh:mm';
 
@@ -107,12 +108,32 @@ const AutomateOrderTable = (props) => {
     },
     {
       title: 'Time',
-      render: (_, { closeTime, openTime }) => (
-        <Space direction="vertical" size={0}>
-          <Text>{toDisplayDateFromDouble(openTime, DISPLAY_FORMAT)}</Text>
-          <Text>{closeTime ? toDisplayDateFromDouble(closeTime, DISPLAY_FORMAT) : '-'}</Text>
-        </Space>
-      ),
+      render: (_, { closeTime, openTime }) => {
+        let secondLine;
+        if (closeTime) {
+          secondLine = (
+            <Text type="secondary">
+              {getUserFriendlyDisplayDate(
+                toDisplayDateFromDouble(openTime),
+                toDisplayDateFromDouble(closeTime),
+              )}
+            </Text>
+          );
+        } else {
+          secondLine = (
+            <Text type="processing">
+              {getUserFriendlyDisplayDate(toDisplayDateFromDouble(openTime), moment())}
+            </Text>
+          );
+        }
+        return (
+          <Space direction="vertical" size={0}>
+            <Text>{toDisplayDateFromDouble(openTime, DISPLAY_FORMAT)}</Text>
+            <Text>{closeTime ? toDisplayDateFromDouble(closeTime, DISPLAY_FORMAT) : '-'}</Text>
+            {secondLine}
+          </Space>
+        );
+      },
     },
     {
       title: 'Reason',
