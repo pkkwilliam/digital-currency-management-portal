@@ -55,10 +55,10 @@ const InvestWarningModal = (props) => {
         >
           <Descriptions>
             <DescriptionsItem label="Fail Count" span={3}>
-              {invest?.transactionLimiter?.failCount}
+              {invest?.transactionLimiter?.failCount ?? 0}
             </DescriptionsItem>
             <DescriptionsItem label="Next Attempt Time" span={3}>
-              {toDisplayDateFromDouble(invest?.transactionLimiter?.nextAllowAttemptTime)}
+              {toDisplayDateFromDouble(invest?.transactionLimiter?.nextAllowAttemptTime ?? '-')}
             </DescriptionsItem>
           </Descriptions>
         </Card>

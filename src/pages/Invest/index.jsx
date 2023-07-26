@@ -27,6 +27,7 @@ import InvestDetailModal from './components/InvestDetailModal';
 import Text from 'antd/lib/typography/Text';
 import InvestSummary from './components/InvestSummary';
 import InvestWarningModal from './components/InvestWarningModal';
+import InvestStrategy from './components/InvestStrategy';
 
 const POLLING_INTERVAL = 5000;
 
@@ -176,15 +177,14 @@ const Invest = () => {
     },
 
     {
-      title: 'Con/Size/ENO',
-      render: (_, { nextEstimateOpenPrice, maxConcurrent, size }) => (
+      title: 'Con/Size',
+      render: (_, { maxConcurrent, size }) => (
         <Space direction="vertical" size={0}>
           <Text>{maxConcurrent}</Text>
           <Text>{size}</Text>
-          <Text>{nextEstimateOpenPrice ? nextEstimateOpenPrice : '-'}</Text>
         </Space>
       ),
-      tooltip: '1. Maximum Concurrent 2. Size 3. Next Estimate Open Price',
+      tooltip: '1. Maximum Concurrent 2. Size',
     },
     {
       title: 'Gain/Loss',
@@ -251,6 +251,7 @@ const Invest = () => {
           expandedRowRender: (record) => (
             <>
               <InvestSummary invest={record} />
+              <InvestStrategy invest={record} />
               <AutomateOrderTable invest={record} />
             </>
           ),
