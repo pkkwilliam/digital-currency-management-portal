@@ -7,7 +7,12 @@ export const ALGORITHM_DYNAMIC_GRID_TRADE = {
 };
 export const ALGORITHM_DYNAMIC_GRID_TRADE_FLAT = {
   key: 'DYNAMIC_GRID_TRADE_FLAT',
-  label: 'Dynamic Grid Trade Flat',
+  label: 'Dynamic Grid Trade Punish Double Grid Interval',
+  showGrid: true,
+};
+export const ALGORITHM_PURE_GRID = {
+  key: 'PURE_GRID',
+  label: 'Pure Grid',
   showGrid: true,
 };
 
@@ -16,4 +21,5 @@ export const ALGORITHM_TYPES = [
   ALGORITHM_GRID_TRADING,
   ALGORITHM_DYNAMIC_GRID_TRADE,
   ALGORITHM_DYNAMIC_GRID_TRADE_FLAT,
+  ALGORITHM_PURE_GRID,
 ];
