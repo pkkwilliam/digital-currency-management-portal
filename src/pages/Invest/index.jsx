@@ -105,20 +105,23 @@ const Invest = () => {
   const COLUMNS = [
     {
       title: 'Product',
-      render: (_, { active, channel, productName }) => (
-        <Space>
-          <Switch
-            key="switch"
-            checked={active}
-            onChange={() => onActivateToggled(record)}
-            size="small"
-          />
-          <Space direction="vertical" size={0}>
-            <Text>{getEnumLabelByKey(CHANNEL_TYPES, channel, 'shortLabel')}</Text>
-            <Text>{productName}</Text>
+      render: (_, record) => {
+        const { active, channel, productName } = record;
+        return (
+          <Space>
+            <Switch
+              key="switch"
+              checked={active}
+              onChange={() => onActivateToggled(record)}
+              size="small"
+            />
+            <Space direction="vertical" size={0}>
+              <Text>{getEnumLabelByKey(CHANNEL_TYPES, channel, 'shortLabel')}</Text>
+              <Text>{productName}</Text>
+            </Space>
           </Space>
-        </Space>
-      ),
+        );
+      },
     },
     {
       render: (_, record) => {
@@ -140,7 +143,6 @@ const Invest = () => {
     },
     {
       title: 'Type/Algo/Acc',
-
       render: (_, { algorithmType, investType, tradeAccount }) => (
         <Space direction="vertical" size={0}>
           <Text>{getEnumLabelByKey(INVEST_TYPES, investType)}</Text>
@@ -170,17 +172,19 @@ const Invest = () => {
           </Space>
         );
       },
-      tooltip: '1. Offer Price 2. Bid Price',
+      tooltip: '1. Offer Price 2. Spread 3. Bid Price',
     },
+
     {
-      title: 'Con/Size',
-      render: (_, { maxConcurrent, size }) => (
+      title: 'Con/Size/ENO',
+      render: (_, { nextEstimateOpenPrice, maxConcurrent, size }) => (
         <Space direction="vertical" size={0}>
           <Text>{maxConcurrent}</Text>
           <Text>{size}</Text>
+          <Text>{nextEstimateOpenPrice ? nextEstimateOpenPrice : '-'}</Text>
         </Space>
       ),
-      tooltip: '1. Maximum Concurrent 2. Size',
+      tooltip: '1. Maximum Concurrent 2. Size 3. Next Estimate Open Price',
     },
     {
       title: 'Gain/Loss',
@@ -261,9 +265,9 @@ const Invest = () => {
         }}
         toolBarRender={() => [
           <Space key="dateRange">
-            <Button icon={<ReloadOutlined />} key="button" type="secondary" onClick={onInvestSync}>
+            {/* <Button icon={<ReloadOutlined />} key="button" type="secondary" onClick={onInvestSync}>
               Sync
-            </Button>
+            </Button> */}
             <Button
               key="polling"
               type="secondary"
