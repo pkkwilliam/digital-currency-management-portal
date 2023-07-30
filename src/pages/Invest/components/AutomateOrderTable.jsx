@@ -222,12 +222,14 @@ const AutomateOrderTable = (props) => {
     // },
     {
       title: 'Profit/Total',
-      render: (_, { active, actualOpenSize, automateOrderExecuteMethod, profit }) => {
+      render: (_, { active, actualOpenSize, profit, profitPercentage }) => {
         const totalProfit = profit && actualOpenSize ? (profit * actualOpenSize).toFixed(5) : '-';
         const textColor = getTextType(active, profit);
         return (
           <Space direction="vertical" size={0}>
-            <Text type={textColor}>${profit ? profit : '-'}</Text>
+            <Text type={textColor}>
+              ${profit && profitPercentage ? `${profit} (${profitPercentage}%)` : '-'}
+            </Text>
             <Text type={textColor}>${totalProfit}</Text>
           </Space>
         );
