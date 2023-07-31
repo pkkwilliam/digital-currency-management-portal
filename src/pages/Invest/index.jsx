@@ -28,6 +28,7 @@ import Text from 'antd/lib/typography/Text';
 import InvestSummary from './components/InvestSummary';
 import InvestWarningModal from './components/InvestWarningModal';
 import InvestStrategy from './components/InvestStrategy';
+import { findMaxDecimalPoint } from '@/util/numberUtil';
 
 const POLLING_INTERVAL = 5000;
 
@@ -154,7 +155,7 @@ const Invest = () => {
       tooltip: '1. Invest Type (Position Type) 2. Algoirthm Type',
     },
     {
-      title: 'Price',
+      title: 'Price/24hr',
       render: (_, { ticking }) => {
         const { bidPrice, offerPrice } = ticking ?? { bidPrice: 0, offerPrice: 0 };
         const spread = (offerPrice - bidPrice).toFixed(5);
@@ -202,24 +203,27 @@ const Invest = () => {
       tooltip: '1. Gain Rate 2. Loss Rate',
     },
     {
-      title: 'Max/Min',
-      render: (_, { maxPrice, minPrice, maxPrice24Hour, minPrice24Hour }) => (
-        <Space direction="vertical" size={0}>
-          <Space>
-            <Text>${maxPrice}</Text>
-            <Tooltip title="24 Hour Max">
-              <Text>${maxPrice24Hour ? maxPrice24Hour : '-'}</Text>
-            </Tooltip>
+      title: 'Max/Min - 24H',
+      render: (_, { maxPrice, minPrice, maxPrice24Hour, minPrice24Hour }) => {
+        const maxDecimalPoint = findMaxDecimalPoint([minPrice, maxPrice]);
+        return (
+          <Space direction="vertical" size={0}>
+            <Space>
+              <Text>${maxPrice.toFixed(maxDecimalPoint)}</Text>
+              <Tooltip title="24 Hour Max">
+                <Text type="secondary">${maxPrice24Hour ? maxPrice24Hour : '-'}</Text>
+              </Tooltip>
+            </Space>
+            <Space>
+              <Text>${minPrice.toFixed(maxDecimalPoint)}</Text>
+              <Tooltip title="24 Hour Min">
+                <Text type="secondary">${minPrice24Hour ? minPrice24Hour : '-'}</Text>
+              </Tooltip>
+            </Space>
           </Space>
-          <Space>
-            <Text>${minPrice}</Text>
-            <Tooltip title="24 Hour Min">
-              <Text>${minPrice24Hour ? minPrice24Hour : '-'}</Text>
-            </Tooltip>
-          </Space>
-        </Space>
-      ),
-      tooltip: '1. Max Open Price 2. Min Open Price',
+        );
+      },
+      tooltip: '1. Max Open Price 2. Min Open Price - 24 Hour Market Min/Max',
     },
     {
       title: 'Operation',
