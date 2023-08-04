@@ -29,6 +29,7 @@ import InvestSummary from './components/InvestSummary';
 import InvestWarningModal from './components/InvestWarningModal';
 import InvestStrategy from './components/InvestStrategy';
 import { findMaxDecimalPoint } from '@/util/numberUtil';
+import { getNullableData } from '@/util/dataUtil';
 
 const POLLING_INTERVAL = 5000;
 
@@ -155,7 +156,7 @@ const Invest = () => {
       tooltip: '1. Invest Type (Position Type) 2. Algoirthm Type',
     },
     {
-      title: 'Price/24hr',
+      title: 'Price',
       render: (_, { ticking }) => {
         const { bidPrice, offerPrice } = ticking ?? { bidPrice: 0, offerPrice: 0 };
         const spread = (offerPrice - bidPrice).toFixed(5);
@@ -176,7 +177,6 @@ const Invest = () => {
       },
       tooltip: '1. Offer Price 2. Spread 3. Bid Price',
     },
-
     {
       title: 'Con/Size',
       render: (_, { maxConcurrent, size }) => (
@@ -204,20 +204,61 @@ const Invest = () => {
     },
     {
       title: 'Max/Min - 24H',
-      render: (_, { maxPrice, minPrice, maxPrice24Hour, minPrice24Hour }) => {
+      render: (
+        _,
+        {
+          gridInterval,
+          maxPrice,
+          minPrice,
+          maxPrice24Hour,
+          minPrice24Hour,
+          minMaxPriceDifference,
+          minMaxPrice24HourDifference,
+          orderCountToCoverMinMaxRange,
+          orderCountToCover24HourMinMaxRange,
+        },
+      ) => {
         const maxDecimalPoint = findMaxDecimalPoint([minPrice, maxPrice]);
         return (
-          <Space direction="vertical" size={0}>
-            <Space>
+          <Space>
+            <Space direction="vertical" size={0}>
               <Text>${maxPrice.toFixed(maxDecimalPoint)}</Text>
-              <Tooltip title="24 Hour Max">
-                <Text type="secondary">${maxPrice24Hour ? maxPrice24Hour : '-'}</Text>
-              </Tooltip>
-            </Space>
-            <Space>
+              <Space>
+                <Tooltip title="Min/Max Difference">
+                  <Text type="secondary">${getNullableData(minMaxPriceDifference)}</Text>
+                </Tooltip>
+                <Tooltip
+                  title={`Order Count to Cover Hour Min/Max Range - ${getNullableData(
+                    orderCountToCoverMinMaxRange,
+                  )} orders requires to cover the range for Grid Interval ${gridInterval}`}
+                >
+                  <Text type="secondary">{`(${getNullableData(
+                    orderCountToCoverMinMaxRange,
+                  )})`}</Text>
+                </Tooltip>
+              </Space>
               <Text>${minPrice.toFixed(maxDecimalPoint)}</Text>
+            </Space>
+            <Space direction="vertical" size={0}>
+              <Tooltip title="24 Hour Max">
+                <Text type="secondary">${getNullableData(maxPrice24Hour)}</Text>
+              </Tooltip>
+              <Space>
+                <Tooltip title="24 Hour Min/Max Difference">
+                  <Text type="secondary">${getNullableData(minMaxPrice24HourDifference)}</Text>
+                </Tooltip>
+                <Tooltip
+                  title={`Order Count to Cover 24 Hour Min/Max Range - ${getNullableData(
+                    orderCountToCover24HourMinMaxRange,
+                  )} orders requires to cover the range for Grid Interval ${gridInterval}`}
+                >
+                  <Text type="secondary">{`(${getNullableData(
+                    orderCountToCover24HourMinMaxRange,
+                  )})`}</Text>
+                </Tooltip>
+              </Space>
               <Tooltip title="24 Hour Min">
-                <Text type="secondary">${minPrice24Hour ? minPrice24Hour : '-'}</Text>
+                <Text type="secondary">${getNullableData(minPrice24Hour)}</Text>
               </Tooltip>
             </Space>
           </Space>
