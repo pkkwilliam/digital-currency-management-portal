@@ -103,7 +103,7 @@ const Invest = () => {
 
   const setDetailModalVisibleWithPolling = (modalVisible) => {
     setDetailModalVisible(modalVisible);
-    setPolling(!modalVisible);
+    // setPolling(!modalVisible);
   };
 
   const COLUMNS = [
@@ -288,6 +288,7 @@ const Invest = () => {
               label="Edit"
               onClick={() => {
                 setCurrentRow(record);
+                setPolling(false);
                 setDetailModalVisibleWithPolling(true);
               }}
             />
@@ -352,7 +353,11 @@ const Invest = () => {
       />
       <InvestDetailModal
         invest={currentRow}
-        onFinish={currentRow ? onUpdate : onCreate}
+        onFinish={async (request) => {
+          currentRow ? await onUpdate(request) : await onCreate(request);
+          setCurrentRow(undefined);
+          setDetailModalVisible(false);
+        }}
         setVisible={setDetailModalVisibleWithPolling}
         visible={detailModalVisible}
       />
