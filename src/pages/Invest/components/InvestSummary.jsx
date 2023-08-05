@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Col, Divider, Row, Space, Statistic, Tag, Tooltip } from 'antd';
+import { Card, Col, Divider, Row, Skeleton, Space, Statistic, Tag, Tooltip } from 'antd';
 import { GET_INVEST_SUMMARY } from '@/services/hive/investService';
 import { getDate, toApplicationLocalDate } from '@/util/dateUtil';
 import Text from 'antd/lib/typography/Text';
@@ -64,6 +64,9 @@ const InvestSummary = (props) => {
 };
 
 const InvestFinancialReport = (props) => {
+  if (!props.investSummary.executeMethodOrderCount) {
+    return <Skeleton />;
+  }
   const { dateRangeOrderClosedCount, dateRangeOrderClosedProfit, executeMethodOrderCount } =
     props.investSummary;
 
