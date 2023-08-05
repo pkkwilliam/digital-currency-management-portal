@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card, Col, DatePicker, Divider, Row, Space, Statistic, Tag, Tooltip } from 'antd';
+import { Card, Col, Divider, Row, Space, Statistic, Tag, Tooltip } from 'antd';
 import { GET_INVEST_SUMMARY } from '@/services/hive/investService';
 import { getDate, toApplicationLocalDate } from '@/util/dateUtil';
 import Text from 'antd/lib/typography/Text';
-import { SearchOutlined } from '@ant-design/icons';
 import AutomateOrderBar from './InvestSmmaryBar';
+import { AUTOMATE_ORDER_EXECUTE_METHODS } from '@/enum/AutomateOrderExecuteMethod';
 
 const InvestSummary = (props) => {
   const [investSummary, setInvestSummary] = useState({});
   const [dateRange, setDateRange] = useState({
-    startDate: getDate(-30),
-    endDate: getDate(2),
+    startDate: getDate(-1),
+    endDate: getDate(0),
   });
 
   useEffect(() => {
@@ -29,20 +29,20 @@ const InvestSummary = (props) => {
   return (
     <Card
       title="Invest Summary"
-      extra={
-        <Space>
-          <DatePicker.RangePicker
-            dataFormat="YYYY-MM-DD"
-            defaultValue={[dateRange.startDate, dateRange.endDate]}
-            onChange={(dates) => setDateRange({ startDate: dates[0], endDate: dates[1] })}
-          />
-          <Button
-            shape="circle"
-            icon={<SearchOutlined />}
-            onClick={() => getSummary(dateRange.startDate, dateRange.endDate)}
-          />
-        </Space>
-      }
+      // extra={
+      //   <Space>
+      //     <DatePicker.RangePicker
+      //       dataFormat="YYYY-MM-DD"
+      //       defaultValue={[dateRange.startDate, dateRange.endDate]}
+      //       onChange={(dates) => setDateRange({ startDate: dates[0], endDate: dates[1] })}
+      //     />
+      //     <Button
+      //       shape="circle"
+      //       icon={<SearchOutlined />}
+      //       onClick={() => getSummary(dateRange.startDate, dateRange.endDate)}
+      //     />
+      //   </Space>
+      // }
     >
       <Row>
         <Text>Financial Report</Text>
@@ -64,40 +64,23 @@ const InvestSummary = (props) => {
 };
 
 const InvestFinancialReport = (props) => {
-  const { activeOrderCount, gain, loss, potentialGain, potentialLoss } = props.investSummary;
+  const { dateRangeOrderClosedCount, dateRangeOrderClosedProfit, executeMethodOrderCount } =
+    props.investSummary;
+
+  const ExecuteMethodOrderCountTags = AUTOMATE_ORDER_EXECUTE_METHODS.map((method) => {
+    return (
+      <Tag color={method.color} key={method.key}>{`${method.label} - ${
+        executeMethodOrderCount[method.key]
+      }`}</Tag>
+    );
+  });
   return (
-    <Space split={<Divider type="vertical" />}>
-      <Statistic title="Active" value={activeOrderCount ?? 0} />
-      <Statistic
-        title="Gain"
-        value={gain ?? 0}
-        precision={2}
-        valueStyle={{ color: '#3f8600' }}
-        prefix={'$'}
-      />
-      <Statistic
-        title="Loss"
-        value={loss ?? 0}
-        precision={2}
-        valueStyle={{ color: '#cf1322' }}
-        prefix={'$'}
-      />
-
-      <Statistic
-        title="P-Gain"
-        value={potentialGain ?? 0}
-        precision={2}
-        valueStyle={{ color: '#3f8600' }}
-        prefix={'$'}
-      />
-
-      <Statistic
-        title="P-Loss"
-        value={potentialLoss ?? 0}
-        precision={2}
-        valueStyle={{ color: '#cf1322' }}
-        prefix={'$'}
-      />
+    <Space direction="vertical">
+      <Space split={<Divider type="vertical" />}>
+        <Statistic title="-1 Day Order Count" value={dateRangeOrderClosedCount} />
+        <Statistic title="-1 Day Profit" value={dateRangeOrderClosedProfit} prefix={'$'} />
+      </Space>
+      {ExecuteMethodOrderCountTags}
     </Space>
   );
 };

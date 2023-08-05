@@ -30,6 +30,7 @@ import InvestWarningModal from './components/InvestWarningModal';
 import InvestStrategy from './components/InvestStrategy';
 import { findMaxDecimalPoint } from '@/util/numberUtil';
 import { getNullableData } from '@/util/dataUtil';
+import { AUTOMATE_ORDER_EXECUTE_METHOD_AUTO } from '@/enum/AutomateOrderExecuteMethod';
 
 const POLLING_INTERVAL = 5000;
 
@@ -179,12 +180,22 @@ const Invest = () => {
     },
     {
       title: 'Con/Size',
-      render: (_, { maxConcurrent, size }) => (
-        <Space direction="vertical" size={0}>
-          <Text>{maxConcurrent}</Text>
-          <Text>{size}</Text>
-        </Space>
-      ),
+      render: (_, { executeMethodOrderCount, maxConcurrent, size }) => {
+        const executeMethodAutomateOrderCount =
+          executeMethodOrderCount[AUTOMATE_ORDER_EXECUTE_METHOD_AUTO.key];
+        const openOrderFull = executeMethodAutomateOrderCount >= maxConcurrent;
+        return (
+          <Space direction="vertical" size={0}>
+            <Space size={1}>
+              <Text type={openOrderFull ? 'danger' : 'secondary'}>
+                {executeMethodAutomateOrderCount}
+              </Text>
+              /<Text>{maxConcurrent}</Text>
+            </Space>
+            <Text>{size}</Text>
+          </Space>
+        );
+      },
       tooltip: '1. Maximum Concurrent 2. Size',
     },
     {
@@ -223,12 +234,12 @@ const Invest = () => {
           <Space>
             <Space direction="vertical" size={0}>
               <Text>${maxPrice.toFixed(maxDecimalPoint)}</Text>
-              <Space>
+              <Space size={0}>
                 <Tooltip title="Min/Max Difference">
                   <Text type="secondary">${getNullableData(minMaxPriceDifference)}</Text>
                 </Tooltip>
                 <Tooltip
-                  title={`Order Count to Cover Hour Min/Max Range - ${getNullableData(
+                  title={`Order Count to Cover Min/Max Range - ${getNullableData(
                     orderCountToCoverMinMaxRange,
                   )} orders requires to cover the range for Grid Interval ${gridInterval}`}
                 >
@@ -243,7 +254,7 @@ const Invest = () => {
               <Tooltip title="24 Hour Max">
                 <Text type="secondary">${getNullableData(maxPrice24Hour)}</Text>
               </Tooltip>
-              <Space>
+              <Space size={0}>
                 <Tooltip title="24 Hour Min/Max Difference">
                   <Text type="secondary">${getNullableData(minMaxPrice24HourDifference)}</Text>
                 </Tooltip>
