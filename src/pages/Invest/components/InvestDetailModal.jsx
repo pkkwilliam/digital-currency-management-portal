@@ -17,6 +17,7 @@ import ProFormChannelAccountSelect from '@/commons/proForm/ProFormChannelAccontS
 import InvestOrderBook from './InvestOrderBook';
 import ChannelProductIdLookup from './ChannelProductIdLookup';
 import { getEnumObjectByKey } from '@/enum/enumUtil';
+import ProFormInvestFeatureSelect from '@/commons/proForm/ProFormInvestFeatureSelect';
 
 const InvestModalForm = (props) => {
   const { invest, onFinish, setVisible, visible } = props;
@@ -70,6 +71,7 @@ const InvestModalForm = (props) => {
             name={['algorithmType']}
             rules={[{ required: true }]}
           />
+          <ProFormInvestFeatureSelect label="Features" name={['investFeatures']} />
         </Space>
         <Space>
           <ProFormDigit

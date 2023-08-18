@@ -15,6 +15,11 @@ export const ALGORITHM_PURE_GRID = {
   label: 'Pure Grid',
   showGrid: true,
 };
+export const ALGORITHM_PURE_GRID_AUTO = {
+  key: 'PURE_GRID_AUTO',
+  label: 'Pure Grid Auto',
+  showGrid: true,
+};
 
 export const ALGORITHM_TYPES = [
   ALGORITHM_BRUTAL_FORCE,
@@ -22,4 +27,5 @@ export const ALGORITHM_TYPES = [
   ALGORITHM_DYNAMIC_GRID_TRADE,
   ALGORITHM_DYNAMIC_GRID_TRADE_FLAT,
   ALGORITHM_PURE_GRID,
+  ALGORITHM_PURE_GRID_AUTO,
 ];
