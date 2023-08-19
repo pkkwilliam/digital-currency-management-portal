@@ -137,12 +137,30 @@ const AutomateOrderTable = (props) => {
     },
     {
       title: 'Reason',
-      render: (_, { closeReason, openReason }) => (
-        <Space direction="vertical" size={0}>
-          <Text>{getEnumLabelByKey(TRANSACTION_REASONS, openReason, 'label', '-')}</Text>
-          <Text>{getEnumLabelByKey(TRANSACTION_REASONS, closeReason, 'label', '-')}</Text>
-        </Space>
-      ),
+      render: (_, { closeReason, openReason }) => {
+        const openReasonEnumObject = getEnumObjectByKey(TRANSACTION_REASONS, openReason, '-');
+        const closeReasonEnumObject = getEnumObjectByKey(TRANSACTION_REASONS, closeReason, '-');
+        return (
+          <Space>
+            {/* <Space direction="vertical" size={0}>
+              {openReasonEnumObject.icon}
+              {closeReasonEnumObject.icon ? closeReasonEnumObject.icon : '-'}
+            </Space> */}
+            <Space direction="vertical" size={0}>
+              <Popover content={openReasonEnumObject.description}>
+                <Text>{openReasonEnumObject.label}</Text>
+              </Popover>
+              <Popover
+                content={
+                  closeReasonEnumObject.description ? closeReasonEnumObject.description : 'N/A'
+                }
+              >
+                <Text>{closeReasonEnumObject.label}</Text>
+              </Popover>
+            </Space>
+          </Space>
+        );
+      },
     },
     {
       title: 'Actual/Diff',
