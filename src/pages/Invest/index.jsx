@@ -7,7 +7,7 @@ import {
   CALCULATE_METHOD_PERCENTAGE,
 } from '@/enum/CalculateMethod';
 import { CHANNEL_TYPES } from '@/enum/Channel';
-import { getEnumLabelByKey } from '@/enum/enumUtil';
+import { getEnumLabelByKey, getEnumObjectByKey } from '@/enum/enumUtil';
 import { INVEST_TYPES } from '@/enum/investType';
 import {
   BEDROCK_ACTIVATE_SERVICE_REQEUST,
@@ -19,7 +19,7 @@ import { INVEST_SYNC } from '@/services/hive/investSyncService';
 import { LoadingOutlined, PlusOutlined, ReloadOutlined, WarningFilled } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import { Button, Space, Switch, Tooltip } from 'antd';
+import { Button, Popover, Space, Switch, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { GET_INVEST_DETAIL, USER_INVEST_SERVICE_CONFIG } from '../../services/hive/investService';
 import AutomateOrderTable from './components/AutomateOrderTable';
@@ -31,6 +31,7 @@ import InvestStrategy from './components/InvestStrategy';
 import { findMaxDecimalPoint } from '@/util/numberUtil';
 import { getNullableData } from '@/util/dataUtil';
 import { AUTOMATE_ORDER_EXECUTE_METHOD_AUTO } from '@/enum/AutomateOrderExecuteMethod';
+import { INVEST_FEATURES } from '@/enum/investFeature';
 
 const POLLING_INTERVAL = 5000;
 
@@ -146,14 +147,25 @@ const Invest = () => {
       },
     },
     {
-      title: 'Type/Algo/Acc',
-      render: (_, { algorithmType, investType, tradeAccount }) => (
-        <Space direction="vertical" size={0}>
-          <Text>{getEnumLabelByKey(INVEST_TYPES, investType)}</Text>
-          <Text>{getEnumLabelByKey(ALGORITHM_TYPES, algorithmType)}</Text>
-          <Text>{tradeAccount}</Text>
-        </Space>
-      ),
+      title: 'Type/Algo/Acc/Feature',
+      render: (_, { algorithmType, investFeatures, investType, tradeAccount }) => {
+        const featuresIcon = investFeatures.map((feature) => {
+          const featureObject = getEnumObjectByKey(INVEST_FEATURES, feature);
+          return (
+            <Popover content={featureObject.description} key={feature}>
+              {featureObject.icon}
+            </Popover>
+          );
+        });
+        return (
+          <Space direction="vertical" size={0}>
+            <Text>{getEnumLabelByKey(INVEST_TYPES, investType)}</Text>
+            <Text>{getEnumLabelByKey(ALGORITHM_TYPES, algorithmType)}</Text>
+            <Text>{tradeAccount}</Text>
+            <Space>{featuresIcon}</Space>
+          </Space>
+        );
+      },
       tooltip: '1. Invest Type (Position Type) 2. Algoirthm Type',
     },
     {

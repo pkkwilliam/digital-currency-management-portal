@@ -51,7 +51,7 @@ export const TRANSACTION_REASON_EXTERNAL_RAPID_CLOSE = {
   description:
     'Invest Config contains Rapid Close - Application will attempt to close the order if SELECTED Algoirthm supports it.',
   color: 'error',
-  icon: <ThunderboltTwoTone color="#fceb49" />,
+  icon: <ThunderboltTwoTone twoToneColor="#f0de3c" />,
 };
 
 export const TRANSACTION_REASONS = [
