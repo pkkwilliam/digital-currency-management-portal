@@ -12,7 +12,7 @@ export const INVEST_FEATURE_RAPID_CLOSE = {
   label: 'Rapid Close',
   description:
     'Invest Config contains Rapid Close - Application will attempt to close the order by Algoirthm supports it.',
-  icon: <ThunderboltTwoTone twoToneColor="#dbcb35" />,
+  icon: <ThunderboltTwoTone twoToneColor="#f0de3c" />,
 };
 export const INVEST_FEATURE_RISK_MANAGE = {
   key: 'RISK_MANAGE',

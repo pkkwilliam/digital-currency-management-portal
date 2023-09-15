@@ -1,7 +1,7 @@
 export default [
   {
     path: '/',
-    redirect: '/invest',
+    redirect: '/channelBroker',
   },
   {
     hideInMenu: true,
@@ -82,17 +82,21 @@ export default [
     ],
   },
   {
-    path: '/invest',
-    name: 'Invest',
-    icon: 'reconciliation',
-    component: './Invest/index',
+    path: '/channelBroker',
+    name: 'Channel Broker',
+    component: './ChannelBroker/index',
   },
   {
-    path: '/investV2',
-    name: 'Invest V2',
-    icon: 'reconciliation',
-    component: './InvestV2/index',
+    path: '/invest',
+    name: 'Invest',
+    component: './Invest/index',
   },
+  // {
+  //   path: '/investV2',
+  //   name: 'Invest V2',
+  //   icon: 'reconciliation',
+  //   component: './InvestV2/index',
+  // },
   // {
   //   path: '/admin',
   //   name: '數字螞蟻管理',
