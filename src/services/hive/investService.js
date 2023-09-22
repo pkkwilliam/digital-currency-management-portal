@@ -49,6 +49,7 @@ export async function GET_PRODUCT_ID(channel, keyword) {
   return constructBasicRequest(request);
 }
 
+// Transaction Limiter
 export async function DELETE_ALL_ERROR_LOGS(investId) {
   const request = {
     authenticated: USER_INVEST_SERVICE_CONFIG.requireAuth,
@@ -63,6 +64,16 @@ export async function RESET_TRANSACTION_LIMITER(investId) {
     authenticated: USER_INVEST_SERVICE_CONFIG.requireAuth,
     method: 'PUT',
     requestUrl: USER_INVEST_SERVICE_CONFIG.serviceUrl + `/${investId}/reset_transaction_limiter`,
+  };
+  return constructBasicRequest(request);
+}
+
+// News
+export async function GET_INVEST_NEWS(investId) {
+  const request = {
+    authenticated: USER_INVEST_SERVICE_CONFIG.requireAuth,
+    method: 'GET',
+    requestUrl: USER_INVEST_SERVICE_CONFIG.serviceUrl + `/${investId}/news`,
   };
   return constructBasicRequest(request);
 }

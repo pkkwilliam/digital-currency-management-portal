@@ -32,6 +32,7 @@ import { findMaxDecimalPoint } from '@/util/numberUtil';
 import { getNullableData } from '@/util/dataUtil';
 import { AUTOMATE_ORDER_EXECUTE_METHOD_AUTO } from '@/enum/AutomateOrderExecuteMethod';
 import { INVEST_FEATURES } from '@/enum/investFeature';
+import InvestNewsModal from './components/InvestNewsModal';
 
 const POLLING_INTERVAL = 5000;
 
@@ -53,6 +54,7 @@ const Invest = () => {
 
   const [currentRow, setCurrentRow] = useState();
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [newsModalVisible, setNewsModalVisible] = useState(false);
   const [warningModalVisible, setWarningModalVisible] = useState(false);
 
   const onCreate = async (request) => {
@@ -132,18 +134,18 @@ const Invest = () => {
       render: (_, record) => {
         const { errorLogs, transactionLimiter } = record;
         const hasErrorLogs = errorLogs && errorLogs.length > 0;
-        if (!transactionLimiter && !hasErrorLogs) {
-          return null;
-        }
-        return (
-          <WarningFilled
-            onClick={() => {
-              setCurrentRow(record);
-              setWarningModalVisible(true);
-            }}
-            style={{ fontSize: 22, color: '#FF5733' }}
-          />
-        );
+        const Warning =
+          !transactionLimiter && !hasErrorLogs ? null : (
+            <WarningFilled
+              onClick={() => {
+                setCurrentRow(record);
+                setWarningModalVisible(true);
+              }}
+              style={{ fontSize: 22, color: '#FF5733' }}
+            />
+          );
+
+        return <Space direction="vertical">{Warning}</Space>;
       },
     },
     {
@@ -296,6 +298,14 @@ const Invest = () => {
         return (
           <Space direction="vertical">
             <InactiveableLinkButton
+              key="news"
+              label="News"
+              onClick={() => {
+                setCurrentRow(record);
+                setNewsModalVisible(true);
+              }}
+            />
+            <InactiveableLinkButton
               key="edit"
               label="Edit"
               onClick={() => {
@@ -372,6 +382,15 @@ const Invest = () => {
         }}
         setVisible={setDetailModalVisibleWithPolling}
         visible={detailModalVisible}
+      />
+      <InvestNewsModal
+        invest={currentRow}
+        onFinish={() => {
+          setCurrentRow(undefined);
+          tableRef.current.reload();
+        }}
+        setVisible={setNewsModalVisible}
+        visible={newsModalVisible}
       />
       <InvestWarningModal
         invest={currentRow}
