@@ -17,8 +17,16 @@ export const AUTOMATE_ORDER_EXECUTE_METHOD_TOTAL_IGNORE = {
   color: 'error',
 };
 
+export const AUTOMATE_ORDER_EXECUTE_METHOD_IGNORE_RISK = {
+  key: 'IGNORE_RISK',
+  info: 'Ignore risk mode - System will not  manage the risk of this order',
+  label: 'Ignore Risk',
+  color: 'warning',
+};
+
 export const AUTOMATE_ORDER_EXECUTE_METHODS = [
   AUTOMATE_ORDER_EXECUTE_METHOD_AUTO,
   AUTOMATE_ORDER_EXECUTE_METHOD_IGNORE_CONCURRENT,
+  AUTOMATE_ORDER_EXECUTE_METHOD_IGNORE_RISK,
   AUTOMATE_ORDER_EXECUTE_METHOD_TOTAL_IGNORE,
 ];
