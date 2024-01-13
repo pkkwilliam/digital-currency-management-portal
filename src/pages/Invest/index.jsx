@@ -19,7 +19,7 @@ import { INVEST_SYNC } from '@/services/hive/investSyncService';
 import { LoadingOutlined, PlusOutlined, ReloadOutlined, WarningFilled } from '@ant-design/icons';
 import { PageContainer } from '@ant-design/pro-layout';
 import ProTable from '@ant-design/pro-table';
-import { Button, Popover, Space, Switch, Tooltip } from 'antd';
+import { Button, Popover, Space, Switch, Tabs, Tooltip } from 'antd';
 import { useRef, useState } from 'react';
 import { GET_INVEST_DETAIL, USER_INVEST_SERVICE_CONFIG } from '../../services/hive/investService';
 import AutomateOrderTable from './components/AutomateOrderTable';
@@ -33,6 +33,8 @@ import { getNullableData } from '@/util/dataUtil';
 import { AUTOMATE_ORDER_EXECUTE_METHOD_AUTO } from '@/enum/AutomateOrderExecuteMethod';
 import { INVEST_FEATURES } from '@/enum/investFeature';
 import InvestNewsModal from './components/InvestNewsModal';
+import InvestForecast from './components/InvestForecast';
+import ManualForecastRequest from './components/ManualForecastRequest';
 
 const POLLING_INTERVAL = 5000;
 
@@ -327,13 +329,36 @@ const Invest = () => {
         columns={COLUMNS}
         columnEmptyText={'-'}
         expandable={{
-          expandedRowRender: (record) => (
-            <>
-              <InvestSummary invest={record} />
-              <InvestStrategy invest={record} />
-              <AutomateOrderTable invest={record} />
-            </>
-          ),
+          expandedRowRender: (record) => {
+            const items = [
+              {
+                key: 'investSumamry',
+                label: 'Summary',
+                children: <InvestSummary invest={record} />,
+              },
+              {
+                key: 'investStrategy',
+                label: 'Strategy',
+                children: <InvestStrategy invest={record} />,
+              },
+              {
+                key: 'automateOrderTable',
+                label: 'Order',
+                children: <AutomateOrderTable invest={record} />,
+              },
+              {
+                key: 'forecast',
+                label: 'AI Forecast',
+                children: <InvestForecast invest={record} />,
+              },
+              {
+                key: 'manualForecast',
+                label: 'Manual Forecast',
+                children: <ManualForecastRequest invest={record} />,
+              },
+            ];
+            return <Tabs items={items} />;
+          },
         }}
         polling={polling || undefined}
         request={(params, sort, filters) => query(params, sort, filters)}
