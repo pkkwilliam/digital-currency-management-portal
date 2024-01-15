@@ -1,3 +1,4 @@
+import { INVEST_FORECAST_USAGE_TYPES } from '@/enum/InvestForecastUsageType';
 import { ANALYSIS_CHANNELS } from '@/enum/analysisChannel';
 import { getEnumLabelByKey } from '@/enum/enumUtil';
 import { GET_INVEST_FORECAST } from '@/services/hive/investForecastService';
@@ -34,13 +35,17 @@ const InvestForecast = (props) => {
       ),
     },
     {
+      title: 'News',
+      dataIndex: ['newsId'],
+    },
+    {
       title: 'Channel',
       dataIndex: ['analysisChannel'],
       renderText: (analysisChannel) => getEnumLabelByKey(ANALYSIS_CHANNELS, analysisChannel),
     },
     {
-      title: 'Confident',
-      dataIndex: ['confident'],
+      title: 'Confidence',
+      dataIndex: ['confidenceRate'],
       renderText: (text) => (text * 100).toFixed(2) + '%',
     },
     {
@@ -56,6 +61,11 @@ const InvestForecast = (props) => {
           </Space>
         );
       },
+    },
+    {
+      title: 'Usage',
+      dataIndex: ['usageType'],
+      renderText: (usageType) => getEnumLabelByKey(INVEST_FORECAST_USAGE_TYPES, usageType),
     },
   ];
   return (
