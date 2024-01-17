@@ -17,6 +17,7 @@ const ManualForecastRequest = (props) => {
   const { invest } = props;
   const [loading, setLoading] = useState(true);
   const [manaulForecastRequests, setManualForecastRequests] = useState([]);
+  const [updatedValue, setUpdatedValue] = useState();
 
   useEffect(() => {
     getManualForecastRequests();
@@ -42,6 +43,8 @@ const ManualForecastRequest = (props) => {
         invest={invest}
         manaulForecastRequest={manaulForecastRequest}
         onCreateFinished={onCreateFinished}
+        setUpdatedValue={setUpdatedValue}
+        updatedValue={updatedValue}
       />
     );
   });
@@ -57,7 +60,7 @@ const ManualForecastRequest = (props) => {
 };
 
 const ManualRequestAndInput = (props) => {
-  const { invest, manaulForecastRequest, onCreateFinished } = props;
+  const { invest, manaulForecastRequest, onCreateFinished, setUpdatedValue, updatedValue } = props;
   const { message, newsId } = manaulForecastRequest;
 
   const onFinish = async (values) => {
@@ -70,6 +73,7 @@ const ManualRequestAndInput = (props) => {
       parsedJson,
     );
     await CREATE_INVEST_FORECAST(request);
+    setUpdatedValue(request);
     onCreateFinished();
   };
 
@@ -79,10 +83,14 @@ const ManualRequestAndInput = (props) => {
     onCreateFinished();
   };
 
+  const updatedValueMessage = !updatedValue
+    ? message
+    : getReplaceMinMaxMessage(message, updatedValue.maxPrice, updatedValue.minPrice);
+  const toDisplayMessage = messageCleaner(updatedValueMessage, ['<']);
   return (
     <>
       <Paragraph>
-        <pre>{message}</pre>
+        <pre>{toDisplayMessage}</pre>
       </Paragraph>
       <Form
         name="wrap"
@@ -112,6 +120,20 @@ const ManualRequestAndInput = (props) => {
   );
 };
 
+function messageCleaner(message, posfixRemovers) {
+  let result = message;
+  for (let symbol of posfixRemovers) {
+    result = result.substring(0, result.indexOf(symbol));
+  }
+  return result;
+}
+
+function getReplaceMinMaxMessage(message, maxPrice, minPrice) {
+  let result = replaceGeneratedValue(message, 'minPrice=', 'minPrice=' + minPrice);
+  result = replaceGeneratedValue(result, 'maxPrice=', 'maxPrice=' + maxPrice);
+  return result;
+}
+
 function generateManualForecastResult(invest, newsId, usageType, toUpdateValues = {}) {
   const { algorithmType, gainSellRate, lossSellRate, size, gridInterval, maxPrice, minPrice } =
     invest;
@@ -132,6 +154,14 @@ function generateManualForecastResult(invest, newsId, usageType, toUpdateValues 
     ...toUpdateValues,
   };
   return request;
+}
+
+function replaceGeneratedValue(news, label, newValue) {
+  const startIndex = news.indexOf(label);
+  const endIndex = news.substring(startIndex).indexOf(' ');
+  const toReplace = news.substring(startIndex, startIndex + endIndex);
+  const updatedNews = news.replace(toReplace, newValue);
+  return updatedNews;
 }
 
 export default ManualForecastRequest;
