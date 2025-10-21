@@ -7,11 +7,13 @@ import routes from './routes';
 const { REACT_APP_ENV } = process.env;
 export default defineConfig({
   define: {
-    API_URL: 'https://mdc-api.bitcode-lab.com',
+    API_URL: 'https://mdc-api.fortune-cookie.me',
     MPAY_RETURN_URL: 'https://needwork-management.bitcode-lab.com/#/mpayHelper',
   },
   history: { type: 'hash' },
   hash: true,
+  publicPath: process.env.NODE_ENV === 'production' ? '/digital-currency-management-portal/' : '/',
+  base: '/digital-currency-management-portal/',
   antd: {},
   dva: {
     hmr: true,
