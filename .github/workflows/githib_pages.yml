@@ -33,6 +33,7 @@ jobs:
       - name: Build project
         run: npm run build
         env:
+          NODE_OPTIONS: --openssl-legacy-provider
           CI: false
 
       # if you're using Ant Design Pro with Umi, it outputs to /dist by default
