@@ -1,0 +1,4 @@
+export const ANALYSIS_CHANNEL_MANUAL = { key: 'MANUAL', label: 'Manual' };
+export const ANALYSIS_CHANNEL_AUTO_CHAT_GPT = { key: 'AUTO_CHAT_GPT', label: 'ChatGPT' };
+
+export const ANALYSIS_CHANNELS = [ANALYSIS_CHANNEL_MANUAL, ANALYSIS_CHANNEL_AUTO_CHAT_GPT];

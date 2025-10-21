@@ -1,0 +1,7 @@
+export const INVEST_FORECAST_USAGE_TYPE_APPLY = { key: 'APPLY', label: 'Apply' };
+export const INVEST_FORECAST_USAGE_TYPE_DISUSE = { key: 'DISUSE', label: 'Disuse' };
+
+export const INVEST_FORECAST_USAGE_TYPES = [
+  INVEST_FORECAST_USAGE_TYPE_APPLY,
+  INVEST_FORECAST_USAGE_TYPE_DISUSE,
+];

@@ -1,21 +1,25 @@
 import React, { useRef, useState } from 'react';
 import ProTable from '@ant-design/pro-table';
-import { GET_INVEST_AUTOMATE_ORDERS } from '@/services/hive/automateOrderService';
-import { OPEN_ORDER, CLOSE_ORDER } from '@/services/hive/manualOrderService';
+import {
+  GET_INVEST_AUTOMATE_ORDERS,
+  USER_AUTOMATE_ORDER_SERVICE_CONFIG,
+} from '@/services/hive/automateOrderService';
+import { OPEN_ORDER, CLOSE_ORDER, UPDATE_EXECUTE_METHOD } from '@/services/hive/manualOrderService';
 import { getEnumLabelByKey, getEnumObjectByKey } from '@/enum/enumUtil';
 import {
   AUTOMATE_ORDER_STATUS,
   AUTOMATE_ORDER_STATUS_SELLING,
   AUTOMATE_ORDER_STATUS_SUBMITTED,
-  AUTOMATE_ORDER_STATUS_SOLD,
-  AUTOMATE_ORDER_STATUS_FILLED,
 } from '@/enum/AutomateOrderStatus';
 import { Badge, Button, Card, Popover, Space, Tag } from 'antd';
 import { LoadingOutlined, ReloadOutlined, SyncOutlined } from '@ant-design/icons';
 import InactiveableLinkButton from '@/commons/InactiveableLinkButton';
 import { TRANSACTION_REASONS } from '@/enum/TransactionReason';
 import Text from 'antd/lib/typography/Text';
-import { toDisplayDateFromDouble } from '@/util/dateUtil';
+import { getUserFriendlyDisplayDate, toDisplayDateFromDouble } from '@/util/dateUtil';
+import { AUTOMATE_ORDER_EXECUTE_METHODS } from '@/enum/AutomateOrderExecuteMethod';
+import { BEDROCK_DEACTIVATE_SERVICE_REQUEST } from '@/services/hive/bedrockTemplateService';
+import moment from 'moment';
 
 const DISPLAY_FORMAT = 'DD/hh:mm';
 
@@ -48,25 +52,38 @@ const AutomateOrderPopover = ({ item }) => {
 };
 
 const StatusBar = (props) => {
-  const [showInfo, setShowInfo] = useState(false);
-  const { active, invest, status } = props.record;
+  const { active, automateOrderExecuteMethod, invest, status } = props.record;
+
+  // Status
   const enumObject = getEnumObjectByKey(AUTOMATE_ORDER_STATUS, status);
   const spin =
     status === AUTOMATE_ORDER_STATUS_SELLING.key || status === AUTOMATE_ORDER_STATUS_SUBMITTED.key;
   let color;
   if (!active) {
     color = 'default';
-  } else if (status === AUTOMATE_ORDER_STATUS_SOLD.key) {
-    color = 'error';
-  } else if (status === AUTOMATE_ORDER_STATUS_FILLED.key) {
-    color = 'success';
+    // } else if (status === AUTOMATE_ORDER_STATUS_SOLD.key) {
+    //   color = 'error';
+    // } else if (status === AUTOMATE_ORDER_STATUS_FILLED.key) {
+    //   color = 'success';
   } else {
     color = 'processing';
   }
+
+  // Automate Order Execute Method
+  const automateOrderExecuteMethodEnum = getEnumObjectByKey(
+    AUTOMATE_ORDER_EXECUTE_METHODS,
+    automateOrderExecuteMethod,
+  );
+
   return (
-    <Tag icon={spin ? <SyncOutlined spin /> : null} color={color}>
-      {enumObject.label}
-    </Tag>
+    <Space direction="vertical">
+      <Tag icon={spin ? <SyncOutlined spin /> : null} color={color}>
+        {enumObject.label}
+      </Tag>
+      <Tag color={active ? automateOrderExecuteMethodEnum.color : 'default'}>
+        {automateOrderExecuteMethodEnum.label}
+      </Tag>
+    </Space>
   );
 };
 
@@ -91,34 +108,72 @@ const AutomateOrderTable = (props) => {
     },
     {
       title: 'Time',
-      render: (_, { closeTime, openTime }) => (
-        <Space direction="vertical" size={0}>
-          <Text>{toDisplayDateFromDouble(openTime, DISPLAY_FORMAT)}</Text>
-          <Text>{closeTime ? toDisplayDateFromDouble(closeTime, DISPLAY_FORMAT) : '-'}</Text>
-        </Space>
-      ),
+      render: (_, { closeTime, openTime }) => {
+        let secondLine;
+        if (closeTime) {
+          secondLine = (
+            <Text type="secondary">
+              {getUserFriendlyDisplayDate(
+                toDisplayDateFromDouble(openTime),
+                toDisplayDateFromDouble(closeTime),
+              )}
+            </Text>
+          );
+        } else {
+          secondLine = (
+            <Text type="processing">
+              {getUserFriendlyDisplayDate(toDisplayDateFromDouble(openTime), moment())}
+            </Text>
+          );
+        }
+        return (
+          <Space direction="vertical" size={0}>
+            <Text>{toDisplayDateFromDouble(openTime, DISPLAY_FORMAT)}</Text>
+            <Text>{closeTime ? toDisplayDateFromDouble(closeTime, DISPLAY_FORMAT) : '-'}</Text>
+            {secondLine}
+          </Space>
+        );
+      },
     },
     {
       title: 'Reason',
-      render: (_, { closeReason, openReason }) => (
-        <Space direction="vertical" size={0}>
-          <Text>{getEnumLabelByKey(TRANSACTION_REASONS, openReason, 'label', '-')}</Text>
-          <Text>{getEnumLabelByKey(TRANSACTION_REASONS, closeReason, 'label', '-')}</Text>
-        </Space>
-      ),
+      render: (_, { closeReason, openReason }) => {
+        const openReasonEnumObject = getEnumObjectByKey(TRANSACTION_REASONS, openReason, '-');
+        const closeReasonEnumObject = getEnumObjectByKey(TRANSACTION_REASONS, closeReason, '-');
+        return (
+          <Space>
+            {/* <Space direction="vertical" size={0}>
+              {openReasonEnumObject.icon}
+              {closeReasonEnumObject.icon ? closeReasonEnumObject.icon : '-'}
+            </Space> */}
+            <Space direction="vertical" size={0}>
+              <Popover content={openReasonEnumObject.description}>
+                <Text>{openReasonEnumObject.label}</Text>
+              </Popover>
+              <Popover
+                content={
+                  closeReasonEnumObject.description ? closeReasonEnumObject.description : 'N/A'
+                }
+              >
+                <Text>{closeReasonEnumObject.label}</Text>
+              </Popover>
+            </Space>
+          </Space>
+        );
+      },
     },
     {
-      title: 'Actual Price',
+      title: 'Actual/Diff',
       render: (
         _,
         { actualClosePrice, actualOpenPrice, expectedClosePrice, expectedOpenPrice, investType },
       ) => {
         const executedClosePriceDifference =
-          actualClosePrice !== expectedClosePrice
+          expectedClosePrice && actualClosePrice !== expectedClosePrice
             ? Math.abs(actualClosePrice - expectedClosePrice).toFixed(6)
             : null;
         const executedOpenPriceDifference =
-          actualOpenPrice !== expectedOpenPrice
+          expectedOpenPrice && actualOpenPrice !== expectedOpenPrice
             ? Math.abs(actualOpenPrice - expectedOpenPrice).toFixed(6)
             : null;
         const showPriceDifference = executedClosePriceDifference || executedOpenPriceDifference;
@@ -185,12 +240,14 @@ const AutomateOrderTable = (props) => {
     // },
     {
       title: 'Profit/Total',
-      render: (_, { active, actualOpenSize, profit }) => {
+      render: (_, { active, actualOpenSize, profit, profitPercentage }) => {
         const totalProfit = profit && actualOpenSize ? (profit * actualOpenSize).toFixed(5) : '-';
         const textColor = getTextType(active, profit);
         return (
           <Space direction="vertical" size={0}>
-            <Text type={textColor}>${profit ? profit : '-'}</Text>
+            <Text type={textColor}>
+              ${profit && profitPercentage ? `${profit} (${profitPercentage}%)` : '-'}
+            </Text>
             <Text type={textColor}>${totalProfit}</Text>
           </Space>
         );
@@ -202,15 +259,58 @@ const AutomateOrderTable = (props) => {
       title: 'Operation',
       valueType: 'option',
       render: (text, record) => {
+        const { active, automateOrderExecuteMethod } = record;
+        const ExecuteMethodOptions = AUTOMATE_ORDER_EXECUTE_METHODS.map((methodObject) => {
+          return (
+            <InactiveableLinkButton
+              disabled={!active || automateOrderExecuteMethod === methodObject.key}
+              info={methodObject.info}
+              key={methodObject.key}
+              label={`Execute Method - ${methodObject.label}`}
+              onClick={() => onClickUpdateExecuteMethod(record, methodObject.key)}
+              popConfirm
+              popConfirmMessage={`Update Execute Method ${methodObject.label}?`}
+            />
+          );
+        });
+
         return [
           <InactiveableLinkButton
-            disabled={!record.active}
+            disabled={!active}
             key="close"
             label="Close"
             onClick={() => onClickCloseOrder(record)}
             popConfirm
             popConfirmMessage="Close this order?"
           />,
+          <Popover
+            key="optionList"
+            content={() => {
+              return (
+                <Space direction="vertical">
+                  {ExecuteMethodOptions}
+                  <InactiveableLinkButton
+                    disabled={!active}
+                    key="deactivate"
+                    label="Deactivate"
+                    onClick={async () => {
+                      await BEDROCK_DEACTIVATE_SERVICE_REQUEST(
+                        USER_AUTOMATE_ORDER_SERVICE_CONFIG,
+                        record.id,
+                      );
+                      tableRef.current.reload();
+                    }}
+                    popConfirm
+                    popConfirmMessage="Deactivate this order?"
+                    textType="danger"
+                  />
+                </Space>
+              );
+            }}
+            placement="bottom"
+          >
+            <a>Options</a>
+          </Popover>,
         ];
       },
     },
@@ -224,6 +324,12 @@ const AutomateOrderTable = (props) => {
 
   const onClickCloseOrder = async (record) => {
     await CLOSE_ORDER(record.id, { actualCloseSize: record.invest.size });
+    tableRef.current.reload();
+    return true;
+  };
+
+  const onClickUpdateExecuteMethod = async (record, executeMethod) => {
+    await UPDATE_EXECUTE_METHOD(record.id, executeMethod);
     tableRef.current.reload();
     return true;
   };

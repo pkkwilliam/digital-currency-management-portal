@@ -8,12 +8,10 @@ const ProFormChannelAccountSelect = (props) => {
   const query = async (params) => {
     const response = await GET_CHANNEL_ACCOUNTS(params);
     const { channelAccounts } = response;
-    const list = Object.keys(channelAccounts).flatMap((channel) =>
-      channelAccounts[channel].map((account) => ({
-        value: account,
-        label: `${getEnumLabelByKey(CHANNEL_TYPES, channel, 'shortLabel')} ${account}`,
-      })),
-    );
+    const list = channelAccounts.map(({ accountId, channel }) => ({
+      value: accountId,
+      label: `${getEnumLabelByKey(CHANNEL_TYPES, channel, 'shortLabel')} ${accountId}`,
+    }));
     return list;
   };
 

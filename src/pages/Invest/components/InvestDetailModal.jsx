@@ -8,13 +8,16 @@ import {
 } from '@ant-design/pro-form';
 import ProFormAlgorithmSelect from '@/commons/proForm/ProFormAlgorithmSelect';
 import ProFormChannelSelect from '@/commons/proForm/ProFormChannelSelect';
-import { Form, Space } from 'antd';
+import { Collapse, Form, Space } from 'antd';
 import { onModalFormVisibleChange } from '@/commons/proForm/proformUtil';
-import { ALGORITHM_DYNAMIC_GRID_TRADE, ALGORITHM_GRID_TRADING } from '@/enum/Algorithm';
+import { ALGORITHM_TYPES } from '@/enum/Algorithm';
 import ProFormCalculateMerhodSelect from '@/commons/proForm/ProFormCalculateMethodSelect';
 import ProFormInvestTypeSelect from '@/commons/proForm/ProFormInvestTypeSelect';
 import ProFormChannelAccountSelect from '@/commons/proForm/ProFormChannelAccontSelect';
 import InvestOrderBook from './InvestOrderBook';
+import ChannelProductIdLookup from './ChannelProductIdLookup';
+import { getEnumObjectByKey } from '@/enum/enumUtil';
+import ProFormInvestFeatureSelect from '@/commons/proForm/ProFormInvestFeatureSelect';
 
 const InvestModalForm = (props) => {
   const { invest, onFinish, setVisible, visible } = props;
@@ -31,12 +34,8 @@ const InvestModalForm = (props) => {
       visible={visible}
       width={1200}
     >
+      <InvestHelper />
       <Space direction="vertical">
-        <ProFormDependency name={['gridInterval', 'maxPrice', 'minPrice']}>
-          {(dependencyValues) => {
-            return <InvestOrderBook {...dependencyValues} />;
-          }}
-        </ProFormDependency>
         <Space>
           <ProFormSwitch label="Active" name={['active']} />
           <ProFormText hidden label="ID" name={['id']} />
@@ -72,6 +71,7 @@ const InvestModalForm = (props) => {
             name={['algorithmType']}
             rules={[{ required: true }]}
           />
+          <ProFormInvestFeatureSelect label="Features" name={['investFeatures']} />
         </Space>
         <Space>
           <ProFormDigit
@@ -85,14 +85,11 @@ const InvestModalForm = (props) => {
           <ProFormDependency name={['algorithmType']}>
             {(dependencyValues) => {
               const { algorithmType } = dependencyValues;
-              switch (algorithmType) {
-                case ALGORITHM_GRID_TRADING.key:
-                  return <GridTradingField />;
-                case ALGORITHM_DYNAMIC_GRID_TRADE.key:
-                  return <GridTradingField />;
-                default:
-                  return null;
+              const algorithmObject = getEnumObjectByKey(ALGORITHM_TYPES, algorithmType);
+              if (algorithmObject.showGrid) {
+                return <GridTradingField />;
               }
+              return null;
             }}
           </ProFormDependency>
         </Space>
@@ -111,7 +108,24 @@ const InvestModalForm = (props) => {
   );
 };
 
-const GridTradingField = () => {
+const InvestHelper = (props) => {
+  return (
+    <Collapse>
+      <Collapse.Panel header="Channel Product ID Lookup" key="1">
+        <ChannelProductIdLookup />
+      </Collapse.Panel>
+      <Collapse.Panel header="Order Book" key="2">
+        <ProFormDependency name={['gridInterval', 'maxPrice', 'minPrice']}>
+          {(dependencyValues) => {
+            return <InvestOrderBook {...dependencyValues} />;
+          }}
+        </ProFormDependency>
+      </Collapse.Panel>
+    </Collapse>
+  );
+};
+
+const GridTradingField = (props) => {
   return (
     <Space>
       <ProFormDigit label="Grid Interval" name={['gridInterval']} rules={[{ required: true }]} />
