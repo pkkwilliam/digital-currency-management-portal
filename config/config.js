@@ -13,7 +13,6 @@ export default defineConfig({
   history: { type: 'hash' },
   hash: true,
   publicPath: process.env.NODE_ENV === 'production' ? '/digital-currency-management-portal/' : '/',
-  base: '/digital-currency-management-portal/',
   antd: {},
   dva: {
     hmr: true,

@@ -6,7 +6,7 @@ const Footer = () => {
   const intl = useIntl();
   const defaultMessage = intl.formatMessage({
     id: 'app.copyright.produced',
-    defaultMessage: '源代碼科技創意實驗室',
+    defaultMessage: 'pkkwilliam 創意實驗室',
   });
   const currentYear = new Date().getFullYear();
   return (
@@ -26,9 +26,9 @@ const Footer = () => {
         //   blankTarget: true,
         // },
         {
-          key: 'Bitcode Tech',
-          title: 'Bitcode Tech',
-          href: 'https://bitcode.mo',
+          key: 'Ka Kei Pun Tech',
+          title: 'Ka Kei Tech',
+          href: 'https://www.linkedin.com/in/pkkwilliam/',
           blankTarget: true,
         },
       ]}
